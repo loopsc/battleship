@@ -12,6 +12,11 @@ export class Gameboard {
         this.missedShots = [];
     }
 
+    isAllShipsSunk() {
+        if (this.ships.length === 0) return true;
+        return false;
+    }
+
     receiveAttack(x, y) {
         const target = this.board[x][y];
         // If miss
@@ -19,6 +24,10 @@ export class Gameboard {
         // If hit
         if (target) {
             target.hit();
+
+            if (target.isSunk()) {
+                this.ships = this.ships.filter((ship) => ship !== target);
+            }
         }
     }
 
@@ -30,6 +39,13 @@ export class Gameboard {
      * @param {String} direction horizontal or verical direction of the ship
      */
     placeShip(x, y, ship, direction) {
+        if (!Object.hasOwn(shipTypes, ship)) {
+            throw new Error("Invalid ship type")
+        }
+        if (direction !== "horizontal" && direction !== "vertical") {
+            throw new Error("Invalid direction")
+        }
+
         const shipLength = shipTypes[ship];
         if (!this.#canPlaceShips(x, y, shipLength, direction)) {
             throw new Error("Can't place ship here");
