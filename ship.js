@@ -11,6 +11,9 @@ export class Ship {
     #sunk;
 
     constructor(ship) {
+        if (!shipTypes.hasOwnProperty(ship)) {
+            throw new Error("Invalid ship type")
+        }
         this.length = shipTypes[ship];
         this.type = ship;
         this.#hits = 0;
