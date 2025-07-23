@@ -1,4 +1,4 @@
-import { Ship } from "../src/modules/ship";
+import { Ship } from "../src/modules/Ship";
 
 describe("Creating ships", () => {
     test("Creating the 5 types of ships. Testing types and length", () => {

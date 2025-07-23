@@ -1,5 +1,5 @@
-import { Gameboard } from "./gameboard";
-class Player {
+import { Gameboard } from "./Gameboard";
+export class Player {
     constructor(type) {
         if (type !== "human" && type !== "computer") {
             throw new Error("Invalid player type");
@@ -9,10 +9,10 @@ class Player {
     }
 
     isComputer() {
-        return type === "computer";
+        return this.type === "computer";
     }
 
     attack(opponentBoard, x, y) {
-        opponentBoard.receiveAttack(x, y)
+        opponentBoard.receiveAttack(x, y);
     }
 }
