@@ -1,4 +1,4 @@
-import { Ship } from "../ship";
+import { Ship } from "../src/modules/ship";
 
 describe("Creating ships", () => {
     test("Creating the 5 types of ships. Testing types and length", () => {
@@ -44,12 +44,12 @@ describe("Creating ships", () => {
             ship.hit();
         }
         expect(ship.isSunk()).toBe(true);
-        expect(sub.isSunk()).toBe(false)
+        expect(sub.isSunk()).toBe(false);
     });
 
     test("Create invalid ship", () => {
         expect(() => {
-            const ship = new Ship("dolphin")
-        }).toThrow("Invalid ship type")
+            const ship = new Ship("dolphin");
+        }).toThrow("Invalid ship type");
     });
 });
