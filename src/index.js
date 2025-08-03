@@ -1,5 +1,4 @@
 import "./styles.css";
-import { renderBoard } from "./render";
+import { setupScreen, clearScreen } from "./render";
 
-renderBoard("player-board");
-renderBoard("enemy-board");
+setupScreen();

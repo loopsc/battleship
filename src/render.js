@@ -1,10 +1,28 @@
-export function renderBoard(containerID) {
-    const board = document.getElementById(containerID);
-    board.innerHTML = ""; //Clear the board
+export function setupScreen() {
+    const main = document.getElementById("main");
 
-    // Create the cells
-    for (let y = 0; y < 10; y++) {
-        for (let x = 0; x < 10; x++) {
+    const board = document.createElement("div");
+    board.classList.add("board");
+
+    const playerNameInput = document.createElement("input");
+    playerNameInput.setAttribute("type", "text");
+    playerNameInput.setAttribute("placeholder", "Player Name");
+    playerNameInput.classList.add("player-name-input");
+
+    const startGameButton = document.createElement("button");
+    startGameButton.classList.add("button");
+    startGameButton.textContent = "Start Game";
+
+    main.appendChild(playerNameInput);
+    main.appendChild(board);
+    main.appendChild(startGameButton);
+
+    generateGrid(board);
+}
+
+function generateGrid(container, gridSize = 10) {
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement("div");
             cell.dataset.x = x;
             cell.dataset.y = y;
@@ -17,12 +35,16 @@ export function renderBoard(containerID) {
             cell.addEventListener("mouseenter", () => {
                 cell.style.backgroundColor = "lightgreen";
             });
-            
+
             cell.addEventListener("mouseleave", () => {
                 cell.style.backgroundColor = "";
             });
 
-            board.appendChild(cell);
+            container.appendChild(cell);
         }
     }
+}
+
+export function clearScreen() {
+    document.body.innerHTML = "";
 }
