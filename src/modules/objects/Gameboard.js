@@ -48,7 +48,7 @@ export class Gameboard {
         }
 
         const shipLength = shipLengths[ship];
-        if (!this.#canPlaceShips(x, y, shipLength, direction)) {
+        if (!this.canPlaceShips(x, y, shipLength, direction)) {
             throw new Error("Can't place ship here");
         }
 
@@ -69,7 +69,9 @@ export class Gameboard {
      * @param {Number} length length of the ship
      * @param {String} direction horizontal or verical direction of the ship
      */
-    #canPlaceShips(x, y, length, direction) {
+    canPlaceShips(x, y, length, direction) {
+        if(direction !== "horizontal" && direction !== "vertical") throw new Error("Orientation must be vertical or horizontal")
+
         // The max length/height of the board
         const maxGridRowCol = 10;
 

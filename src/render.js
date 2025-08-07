@@ -1,4 +1,5 @@
-import { GameManager } from "./modules/GameManager";
+import { GameSetup } from "./modules/GameSetup";
+import { shipLengths } from "./modules/constants";
 
 export function setupScreen() {
     const main = document.getElementById("main");
@@ -44,42 +45,57 @@ export function setupScreen() {
 
     generateAxisLabels(colLabels, rowLabels);
     generateGrid(board);
-    
 }
 
 function generateButtons(container) {
-    const shipTypes = ["Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer"];
+    const shipTypes = [
+        "Carrier",
+        "Battleship",
+        "Cruiser",
+        "Submarine",
+        "Destroyer",
+    ];
 
-    shipTypes.forEach(shipName => {
+    shipTypes.forEach((shipName) => {
         const button = document.createElement("button");
         button.classList.add("menu-buttons", "ship-button");
         button.textContent = shipName;
         button.dataset.ship = shipName.toLowerCase();
 
         button.addEventListener("click", () => {
-            GameManager.selectedShip = button.dataset.ship
+            GameSetup.selectedShip = button.dataset.ship;
 
             // remove active class from the other buttons
-            const allShipButtons = container.querySelectorAll(".ship-button:not(.orientation-button)");
-            allShipButtons.forEach(btn => btn.classList.remove("active"));
+            const allShipButtons = container.querySelectorAll(
+                ".ship-button:not(.orientation-button)"
+            );
+            allShipButtons.forEach((btn) => btn.classList.remove("active"));
             // add active class to the clicked button
-            button.classList.add("active")
-        })
+            button.classList.add("active");
+        });
 
-        container.appendChild(button)
-    })
+        container.appendChild(button);
+    });
 
     const orientationButton = document.createElement("button");
-    orientationButton.classList.add("menu-buttons", "ship-button", "orientation-button");
+    orientationButton.classList.add(
+        "menu-buttons",
+        "ship-button",
+        "orientation-button"
+    );
     orientationButton.textContent = "Horizontal";
     orientationButton.dataset.orientation = "horizontal";
     orientationButton.addEventListener("click", () => {
         const current = orientationButton.dataset.orientation;
         const next = current === "horizontal" ? "vertical" : "horizontal";
         orientationButton.dataset.orientation = next;
-        orientationButton.textContent = next.charAt(0).toUpperCase() + next.slice(1)
-    })
-    container.appendChild(orientationButton)
+
+        GameSetup.selectedOrientation = orientationButton.dataset.orientation;
+
+        orientationButton.textContent =
+            next.charAt(0).toUpperCase() + next.slice(1);
+    });
+    container.appendChild(orientationButton);
 }
 
 function generateAxisLabels(colContainer, rowContainer) {
@@ -105,21 +121,47 @@ function generateGrid(container, gridSize = 10) {
 
             cell.addEventListener("click", () => {
                 console.log(`Clicked ${x}, ${y}`);
-                // Attack logic here
+                //Place ship logic
             });
 
             // Hover logic
             cell.addEventListener("mouseenter", () => {
-                cell.style.backgroundColor = "lightgreen";
+                const highlightedCells = GameSetup.getHoverCells(x, y);
+
+                const validShip = GameSetup.playerBoard.canPlaceShips(
+                    x,
+                    y,
+                    shipLengths[GameSetup.selectedShip],
+                    GameSetup.selectedOrientation
+                );
+
+                for (const [cx, cy] of highlightedCells) {
+                    highlight(cx, cy, container, validShip);
+                }
             });
 
             cell.addEventListener("mouseleave", () => {
-                cell.style.backgroundColor = "";
+                clearHighlights(container);
             });
 
             container.appendChild(cell);
         }
     }
+}
+
+function highlight(x, y, container, validShip) {
+    // Get the cell with the given coordinate
+    // datasets store strings only
+    const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+
+    if (cell) {
+        cell.style.backgroundColor = validShip ? "lightgreen" : "red";
+    }
+}
+
+function clearHighlights(container) {
+    const allCells = container.querySelectorAll("[data-x][data-y]");
+    allCells.forEach((cell) => (cell.style.backgroundColor = ""));
 }
 
 export function clearScreen() {
