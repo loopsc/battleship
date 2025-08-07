@@ -15,7 +15,20 @@
     --light-gray: #f0f0f4;
     --ocean-blue: #566899;
     --cool-pink: #ff4d8880;
+    --light-green: rgb(131, 184, 131);
     --text-size: 1.5rem;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 body {
@@ -122,9 +135,10 @@ body {
     color: var(--light-gray);
 }
 
-.ship-button:hover {
-    background-color: rgb(131, 184, 131);
+.ship-button.active {
+    background-color: var(--light-green);
     color: var(--primary-black);
+    animation: pulse 2s infinite;
 }
 
 .ship-button.orientation-button {

@@ -1,3 +1,5 @@
+import { GameManager } from "./modules/GameManager";
+
 export function setupScreen() {
     const main = document.getElementById("main");
 
@@ -66,13 +68,24 @@ function generateButtons(container) {
     destroyerButton.classList.add("menu-buttons", "ship-button");
     destroyerButton.textContent = "Destroyer"
 
+    const shipButtons = [carrierButton, battleshipButton, cruiserButton, subButton, destroyerButton]
+
+    shipButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            GameManager.selectShip(button.textContent.toLowerCase())
+
+            shipButtons.forEach(btn => btn.classList.remove("active"))
+            button.classList.add("active")
+            console.log(GameManager.selectedShip)
+        })
+    })
+
     const orientationButton = document.createElement("button");
     orientationButton.classList.add("menu-buttons","ship-button", "orientation-button");
     orientationButton.textContent = "Horizontal";
     orientationButton.addEventListener("click", () => {
         orientationButton.textContent = orientationButton.textContent === "Horizontal" ? "Vertical" : "Horizontal";
     })
-
 
     container.append(
         carrierButton,
@@ -110,6 +123,7 @@ function generateGrid(container, gridSize = 10) {
                 // Attack logic here
             });
 
+            // Hover logic
             cell.addEventListener("mouseenter", () => {
                 cell.style.backgroundColor = "lightgreen";
             });
