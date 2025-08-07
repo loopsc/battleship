@@ -48,53 +48,38 @@ export function setupScreen() {
 }
 
 function generateButtons(container) {
-    const carrierButton = document.createElement("button");
-    carrierButton.classList.add("menu-buttons", "ship-button");
-    carrierButton.textContent = "Carrier";
+    const shipTypes = ["Carrier", "Battleship", "Cruiser", "Submarine", "Destroyer"];
 
-    const battleshipButton = document.createElement("button");
-    battleshipButton.classList.add("menu-buttons", "ship-button");
-    battleshipButton.textContent = "Battleship"
+    shipTypes.forEach(shipName => {
+        const button = document.createElement("button");
+        button.classList.add("menu-buttons", "ship-button");
+        button.textContent = shipName;
+        button.dataset.ship = shipName.toLowerCase();
 
-    const cruiserButton = document.createElement("button");
-    cruiserButton.classList.add("menu-buttons", "ship-button");
-    cruiserButton.textContent = "Cruiser"
-
-    const subButton = document.createElement("button");
-    subButton.classList.add("menu-buttons", "ship-button");
-    subButton.textContent = "Submarine"
-
-    const destroyerButton = document.createElement("button");
-    destroyerButton.classList.add("menu-buttons", "ship-button");
-    destroyerButton.textContent = "Destroyer"
-
-    const shipButtons = [carrierButton, battleshipButton, cruiserButton, subButton, destroyerButton]
-
-    shipButtons.forEach(button => {
         button.addEventListener("click", () => {
-            GameManager.selectShip(button.textContent.toLowerCase())
+            GameManager.selectedShip = button.dataset.ship
 
-            shipButtons.forEach(btn => btn.classList.remove("active"))
+            // remove active class from the other buttons
+            const allShipButtons = container.querySelectorAll(".ship-button:not(.orientation-button)");
+            allShipButtons.forEach(btn => btn.classList.remove("active"));
+            // add active class to the clicked button
             button.classList.add("active")
-            console.log(GameManager.selectedShip)
         })
+
+        container.appendChild(button)
     })
 
     const orientationButton = document.createElement("button");
-    orientationButton.classList.add("menu-buttons","ship-button", "orientation-button");
+    orientationButton.classList.add("menu-buttons", "ship-button", "orientation-button");
     orientationButton.textContent = "Horizontal";
+    orientationButton.dataset.orientation = "horizontal";
     orientationButton.addEventListener("click", () => {
-        orientationButton.textContent = orientationButton.textContent === "Horizontal" ? "Vertical" : "Horizontal";
+        const current = orientationButton.dataset.orientation;
+        const next = current === "horizontal" ? "vertical" : "horizontal";
+        orientationButton.dataset.orientation = next;
+        orientationButton.textContent = next.charAt(0).toUpperCase() + next.slice(1)
     })
-
-    container.append(
-        carrierButton,
-        battleshipButton,
-        cruiserButton,
-        subButton,
-        destroyerButton,
-        orientationButton
-    );
+    container.appendChild(orientationButton)
 }
 
 function generateAxisLabels(colContainer, rowContainer) {

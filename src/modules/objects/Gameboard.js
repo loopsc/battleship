@@ -1,5 +1,5 @@
 import { Ship } from "./Ship";
-import { shipTypes } from "../constants";
+import { shipLengths } from "../constants";
 
 export class Gameboard {
     constructor() {
@@ -40,14 +40,14 @@ export class Gameboard {
      * @param {String} direction horizontal or verical direction of the ship
      */
     placeShip(x, y, ship, direction) {
-        if (!Object.hasOwn(shipTypes, ship)) {
+        if (!Object.hasOwn(shipLengths, ship)) {
             throw new Error("Invalid ship type");
         }
         if (direction !== "horizontal" && direction !== "vertical") {
             throw new Error("Invalid direction");
         }
 
-        const shipLength = shipTypes[ship];
+        const shipLength = shipLengths[ship];
         if (!this.#canPlaceShips(x, y, shipLength, direction)) {
             throw new Error("Can't place ship here");
         }

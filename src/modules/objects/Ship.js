@@ -1,13 +1,13 @@
-import { shipTypes } from "../constants";
+import { shipLengths } from "../constants";
 
 export class Ship {
     #hits;
 
     constructor(ship) {
-        if (!shipTypes.hasOwnProperty(ship)) {
+        if (!shipLengths.hasOwnProperty(ship)) {
             throw new Error("Invalid ship type");
         }
-        this.length = shipTypes[ship];
+        this.length = shipLengths[ship];
         this.type = ship;
         this.#hits = 0;
     }
