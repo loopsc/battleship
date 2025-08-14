@@ -51,9 +51,9 @@ export class Gameboard {
         if (!this.canPlaceShips(x, y, ship, direction)) {
             throw new Error("Can't place ship here");
         }
-        
-        const existing = this.ships.find(s => s.type === ship);
-        if (existing) throw new Error("This ship is already on the board")
+
+        const existing = this.ships.find((s) => s.type === ship);
+        if (existing) throw new Error("This ship is already on the board");
 
         const newShip = new Ship(ship);
         this.ships.push(newShip);
@@ -101,7 +101,7 @@ export class Gameboard {
         return true;
     }
 
-    isBoardFull() {
+    allShipsPlaced() {
         return this.ships.length === 5;
     }
 }

@@ -38,8 +38,8 @@ export function setupScreen() {
             GameSetup.playerName = playerNameInput.value;
         }
 
-        if (!GameSetup.playerBoard.isBoardFull()) {
-            throw new Error("Place all ships")
+        if (!GameSetup.playerBoard.allShipsPlaced()) {
+            throw new Error("Place all ships");
         }
     });
 
@@ -137,6 +137,10 @@ function generateGrid(container, gridSize = 10) {
 
             cell.addEventListener("click", () => {
                 console.log(`Clicked ${x}, ${y}`);
+                if (GameSetup.playerBoard.allShipsPlaced()) {
+                    return
+                }
+                
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
                 if (
@@ -171,6 +175,10 @@ function generateGrid(container, gridSize = 10) {
 
             // Hover logic
             cell.addEventListener("mouseenter", () => {
+                if (GameSetup.playerBoard.allShipsPlaced()) {
+                    return
+                }
+
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
                 const validPlacement = GameSetup.playerBoard.canPlaceShips(
