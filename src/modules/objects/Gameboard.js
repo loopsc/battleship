@@ -101,7 +101,7 @@ export class Gameboard {
         return true;
     }
 
-    shipPresent(x, y) {
-        return this.board[x][y] !== null;
+    isBoardFull() {
+        return this.ships.length === 5;
     }
 }

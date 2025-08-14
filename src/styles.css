@@ -141,6 +141,10 @@ body {
     animation: pulse 2s infinite;
 }
 
+.ship-button.disabled {
+    text-decoration: line-through;
+}
+
 .ship-button.orientation-button {
     margin-top: 3rem;
 }

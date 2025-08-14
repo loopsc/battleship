@@ -6,6 +6,7 @@ export const GameSetup = {
     selectedOrientation: "horizontal",
     currentPlayer: "human",
     playerBoard: new Gameboard(),
+    playerName: "",
 
     selectShip(ship) {
         if(typeof ship !== "string") throw new Error("Ship name must be a string")

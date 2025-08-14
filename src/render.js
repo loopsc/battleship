@@ -31,6 +31,18 @@ export function setupScreen() {
     startGameButton.classList.add("menu-buttons");
     startGameButton.textContent = "Start Game";
 
+    startGameButton.addEventListener("click", () => {
+        if (playerNameInput.value === "") {
+            playerNameInput.value = "Player";
+        } else {
+            GameSetup.playerName = playerNameInput.value;
+        }
+
+        if (!GameSetup.playerBoard.isBoardFull()) {
+            throw new Error("Place all ships")
+        }
+    });
+
     generateButtons(buttonsMenu);
 
     boardWrapper.appendChild(corner);
@@ -61,6 +73,10 @@ function generateButtons(container) {
         button.classList.add("menu-buttons", "ship-button");
         button.textContent = shipName;
         button.dataset.ship = shipName.toLowerCase();
+
+        if (button.dataset.ship === "carrier") {
+            button.classList.add("active");
+        }
 
         button.addEventListener("click", () => {
             GameSetup.selectedShip = button.dataset.ship;
@@ -121,10 +137,8 @@ function generateGrid(container, gridSize = 10) {
 
             cell.addEventListener("click", () => {
                 console.log(`Clicked ${x}, ${y}`);
-                const shipLength = shipLengths[GameSetup.selectedShip];
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
-                // Check if the ship can be placed at this starting position
                 if (
                     !GameSetup.playerBoard.canPlaceShips(
                         x,
@@ -143,12 +157,16 @@ function generateGrid(container, gridSize = 10) {
                     GameSetup.selectedShip,
                     GameSetup.selectedOrientation
                 );
-                console.log("Ship placed");
 
                 // Highlight the cells to indicate ship has been placed
                 for (const [cx, cy] of highlightedCells) {
                     highlight(cx, cy, container, "placed");
                 }
+
+                // Disable the button when the ship is placed down
+                disableShipButton(GameSetup.selectedShip);
+
+                console.log("Ships:", GameSetup.playerBoard.ships);
             });
 
             // Hover logic
@@ -201,6 +219,26 @@ function clearHighlight(container) {
     hoveredCells.forEach((cell) =>
         cell.classList.remove("hover-valid", "hover-invalid")
     );
+}
+
+function disableShipButton(shipDataset) {
+    const btn = document.querySelector(`button[data-ship = ${shipDataset}]`);
+    if (!btn) return;
+
+    btn.classList.remove("active");
+    btn.classList.add("disabled");
+
+    const allShipButtons = document.querySelectorAll(
+        ".ship-button:not(.orientation-button)"
+    );
+
+    for (const nextBtn of allShipButtons) {
+        if (!nextBtn.classList.contains("disabled")) {
+            nextBtn.classList.add("active");
+            GameSetup.selectedShip = nextBtn.dataset.ship;
+            break;
+        }
+    }
 }
 
 export function clearScreen() {
