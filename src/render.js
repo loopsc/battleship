@@ -121,27 +121,58 @@ function generateGrid(container, gridSize = 10) {
 
             cell.addEventListener("click", () => {
                 console.log(`Clicked ${x}, ${y}`);
+                const shipLength = shipLengths[GameSetup.selectedShip];
+                const highlightedCells = GameSetup.getHoverCells(x, y);
+
+                // Check if the ship can be placed at this starting position
+                if (
+                    !GameSetup.playerBoard.canPlaceShips(
+                        x,
+                        y,
+                        GameSetup.selectedShip,
+                        GameSetup.selectedOrientation
+                    )
+                ) {
+                    return;
+                }
+
                 //Place ship logic
+                GameSetup.playerBoard.placeShip(
+                    x,
+                    y,
+                    GameSetup.selectedShip,
+                    GameSetup.selectedOrientation
+                );
+                console.log("Ship placed");
+
+                // Highlight the cells to indicate ship has been placed
+                for (const [cx, cy] of highlightedCells) {
+                    highlight(cx, cy, container, "placed");
+                }
             });
 
             // Hover logic
             cell.addEventListener("mouseenter", () => {
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
-                const validShip = GameSetup.playerBoard.canPlaceShips(
+                const validPlacement = GameSetup.playerBoard.canPlaceShips(
                     x,
                     y,
-                    shipLengths[GameSetup.selectedShip],
+                    GameSetup.selectedShip,
                     GameSetup.selectedOrientation
                 );
 
+                // Add the appropriate hover class to all cells the ship would occupy
+                const hoverClass = validPlacement
+                    ? "hover-valid"
+                    : "hover-invalid";
                 for (const [cx, cy] of highlightedCells) {
-                    highlight(cx, cy, container, validShip);
+                    highlight(cx, cy, container, hoverClass);
                 }
             });
 
             cell.addEventListener("mouseleave", () => {
-                clearHighlights(container);
+                clearHighlight(container);
             });
 
             container.appendChild(cell);
@@ -149,19 +180,27 @@ function generateGrid(container, gridSize = 10) {
     }
 }
 
-function highlight(x, y, container, validShip) {
-    // Get the cell with the given coordinate
-    // datasets store strings only
+/**
+ *
+ * @param {Number} x X coordinate
+ * @param {*} y Y coordinate
+ * @param {*} container Grid div element
+ * @param {String} styleClass CSS selected classname
+ */
+function highlight(x, y, container, styleClass) {
     const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-
     if (cell) {
-        cell.style.backgroundColor = validShip ? "lightgreen" : "red";
+        cell.classList.add(styleClass);
     }
 }
 
-function clearHighlights(container) {
-    const allCells = container.querySelectorAll("[data-x][data-y]");
-    allCells.forEach((cell) => (cell.style.backgroundColor = ""));
+function clearHighlight(container) {
+    const hoveredCells = container.querySelectorAll(
+        ".hover-valid, .hover-invalid"
+    );
+    hoveredCells.forEach((cell) =>
+        cell.classList.remove("hover-valid", "hover-invalid")
+    );
 }
 
 export function clearScreen() {

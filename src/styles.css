@@ -79,7 +79,6 @@ body {
     gap: 2rem;
     justify-content: center;
     padding: 2rem;
-
 }
 
 #main {
@@ -144,4 +143,16 @@ body {
 
 .ship-button.orientation-button {
     margin-top: 3rem;
+}
+
+.hover-valid {
+    background-color: lightgreen !important;
+}
+
+.hover-invalid {
+    background-color: red !important;
+}
+
+.placed {
+    background-color: orange !important;
 }

@@ -73,4 +73,15 @@ describe("Gameboard functions", () => {
 
         expect(board.ships.length).toBe(0);
     });
+
+    test("Function returns true if a ship has valid placement", () => {
+        expect(board.canPlaceShips(0,0,5,"horizontal")).toBe(true);
+        expect(board.canPlaceShips(9,0,5,"horizontal")).toBe(false);
+        expect(() => {
+            board.canPlaceShips(9,0,5,"horizntal")
+        }).toThrow("Orientation must be vertical or horizontal");
+        expect(() => {
+            board.canPlaceShips(0,0,"boat","horizontal")
+        }).toThrow("'Length' must be a number");
+    })
 });

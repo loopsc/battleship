@@ -48,9 +48,12 @@ export class Gameboard {
         }
 
         const shipLength = shipLengths[ship];
-        if (!this.canPlaceShips(x, y, shipLength, direction)) {
+        if (!this.canPlaceShips(x, y, ship, direction)) {
             throw new Error("Can't place ship here");
         }
+        
+        const existing = this.ships.find(s => s.type === ship);
+        if (existing) throw new Error("This ship is already on the board")
 
         const newShip = new Ship(ship);
         this.ships.push(newShip);
@@ -69,8 +72,14 @@ export class Gameboard {
      * @param {Number} length length of the ship
      * @param {String} direction horizontal or verical direction of the ship
      */
-    canPlaceShips(x, y, length, direction) {
-        if(direction !== "horizontal" && direction !== "vertical") throw new Error("Orientation must be vertical or horizontal")
+    canPlaceShips(x, y, ship, direction) {
+        const length = shipLengths[ship];
+        if (direction !== "horizontal" && direction !== "vertical")
+            throw new Error("Orientation must be vertical or horizontal");
+
+        if (!Object.hasOwn(shipLengths, ship)) {
+            throw new Error("Invalid ship type");
+        }
 
         // The max length/height of the board
         const maxGridRowCol = 10;
@@ -90,5 +99,9 @@ export class Gameboard {
         }
 
         return true;
+    }
+
+    shipPresent(x, y) {
+        return this.board[x][y] !== null;
     }
 }
