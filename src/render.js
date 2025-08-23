@@ -1,5 +1,4 @@
 import { GameSetup } from "./modules/GameSetup";
-import { shipLengths } from "./modules/constants";
 
 export function setupScreen() {
     const main = document.getElementById("main");
@@ -59,6 +58,7 @@ export function setupScreen() {
     generateGrid(board);
 }
 
+// Generate the ship and orientation buttons
 function generateButtons(container) {
     const shipTypes = [
         "Carrier",
@@ -114,6 +114,7 @@ function generateButtons(container) {
     container.appendChild(orientationButton);
 }
 
+// Generate the labels for the grid
 function generateAxisLabels(colContainer, rowContainer) {
     for (let i = 0; i < 10; i++) {
         const colLabel = document.createElement("div");
@@ -128,6 +129,7 @@ function generateAxisLabels(colContainer, rowContainer) {
     }
 }
 
+// Generate the grid
 function generateGrid(container, gridSize = 10) {
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
@@ -141,8 +143,10 @@ function generateGrid(container, gridSize = 10) {
                     return
                 }
                 
+                // Arra of cell coordinates that a ship will occupy
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
+                // Do nothing if the ship cannot be placed there
                 if (
                     !GameSetup.playerBoard.canPlaceShips(
                         x,
@@ -151,6 +155,7 @@ function generateGrid(container, gridSize = 10) {
                         GameSetup.selectedOrientation
                     )
                 ) {
+                    alert("Ship cannot be placed here");
                     return;
                 }
 
@@ -220,6 +225,7 @@ function highlight(x, y, container, styleClass) {
     }
 }
 
+// Clear all highlights
 function clearHighlight(container) {
     const hoveredCells = container.querySelectorAll(
         ".hover-valid, .hover-invalid"
@@ -229,6 +235,7 @@ function clearHighlight(container) {
     );
 }
 
+// Sets a button to be disabled
 function disableShipButton(shipDataset) {
     const btn = document.querySelector(`button[data-ship = ${shipDataset}]`);
     if (!btn) return;
