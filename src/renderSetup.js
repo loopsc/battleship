@@ -31,15 +31,19 @@ export function setupScreen() {
     startGameButton.textContent = "Start Game";
 
     startGameButton.addEventListener("click", () => {
+        // Error checks
+        if (!GameSetup.playerBoard.allShipsPlaced()) {
+            throw new Error("Place all ships");
+        }
+
+        // Set a default name if none given
         if (playerNameInput.value === "") {
             playerNameInput.value = "Player";
         } else {
             GameSetup.playerName = playerNameInput.value;
         }
 
-        if (!GameSetup.playerBoard.allShipsPlaced()) {
-            throw new Error("Place all ships");
-        }
+        clearScreen()
     });
 
     generateButtons(buttonsMenu);
@@ -140,9 +144,9 @@ function generateGrid(container, gridSize = 10) {
             cell.addEventListener("click", () => {
                 console.log(`Clicked ${x}, ${y}`);
                 if (GameSetup.playerBoard.allShipsPlaced()) {
-                    return
+                    return;
                 }
-                
+
                 // Arra of cell coordinates that a ship will occupy
                 const highlightedCells = GameSetup.getHoverCells(x, y);
 
@@ -181,7 +185,7 @@ function generateGrid(container, gridSize = 10) {
             // Hover logic
             cell.addEventListener("mouseenter", () => {
                 if (GameSetup.playerBoard.allShipsPlaced()) {
-                    return
+                    return;
                 }
 
                 const highlightedCells = GameSetup.getHoverCells(x, y);
