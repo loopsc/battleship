@@ -1,4 +1,4 @@
 import "./styles.css";
-import { setupScreen, clearScreen } from "./renderSetup";
+import { startGame } from "./controller"
 
-setupScreen();
+startGame()

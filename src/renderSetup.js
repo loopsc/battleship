@@ -1,7 +1,10 @@
 import { GameSetup } from "./modules/GameSetup";
-import { renderGame } from "./renderGame";
 
 export function setupScreen() {
+    return renderSetupScreen();
+}
+
+function renderSetupScreen() {
     const main = document.getElementById("main");
 
     const boardWrapper = document.createElement("div");
@@ -31,22 +34,6 @@ export function setupScreen() {
     startGameButton.classList.add("menu-buttons");
     startGameButton.textContent = "Start Game";
 
-    startGameButton.addEventListener("click", () => {
-        // Error checks
-        if (!GameSetup.playerBoard.allShipsPlaced()) {
-            throw new Error("Place all ships");
-        }
-
-        // Set a default name if none given
-        if (playerNameInput.value === "") {
-            playerNameInput.value = "Player";
-        } else {
-            GameSetup.playerName = playerNameInput.value;
-        }
-
-        clearScreen()
-    });
-
     generateButtons(buttonsMenu);
 
     boardWrapper.appendChild(corner);
@@ -61,6 +48,8 @@ export function setupScreen() {
 
     generateAxisLabels(colLabels, rowLabels);
     generateGrid(board);
+
+    return {startGameButton, playerNameInput};
 }
 
 // Generate the ship and orientation buttons
@@ -261,6 +250,4 @@ function disableShipButton(shipDataset) {
     }
 }
 
-export function clearScreen() {
-    document.body.innerHTML = "";
-}
+
