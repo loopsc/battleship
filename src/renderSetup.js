@@ -1,4 +1,5 @@
 import { GameSetup } from "./modules/GameSetup";
+import { renderGame } from "./renderGame";
 
 export function setupScreen() {
     const main = document.getElementById("main");
