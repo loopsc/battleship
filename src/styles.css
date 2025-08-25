@@ -103,7 +103,6 @@ body {
     align-items: center;
     gap: 15rem;
     padding: 2rem;
-
 }
 
 #board-and-buttons {
@@ -164,7 +163,6 @@ body {
 .ship-button.disabled {
     text-decoration: line-through;
     pointer-events: none;
-    
 }
 
 .ship-button.orientation-button {
@@ -183,6 +181,18 @@ body {
     background-color: orange !important;
 }
 
+.miss-ship {
+    background-color: var(--mega-white) !important;
+}
+
+.hit-ship {
+    background-color: orange !important;
+}
+
+.sunk-ship {
+    background-color: red !important; 
+}
+
 .game-player-container,
 .game-bot-container {
     display: flex;
@@ -195,5 +205,5 @@ body {
 .game-labels,
 .bot-labels {
     font-size: 2.5rem;
-    color: var(--mega-white)
+    color: var(--mega-white);
 }

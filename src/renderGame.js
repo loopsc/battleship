@@ -1,5 +1,6 @@
 import { PlayerSetup, BotSetup } from "./modules/GameSetup";
 import { Gameboard } from "./modules/objects/Gameboard";
+import { highlight } from "./renderSetup";
 
 export function renderGame() {
     const main = document.getElementById("main");
@@ -7,16 +8,16 @@ export function renderGame() {
     const parentContainer = document.createElement("div");
     parentContainer.classList.add("game-parent-container");
 
-    main.appendChild(parentContainer)
+    main.appendChild(parentContainer);
 
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("game-player-container");
 
     const playerLabel = document.createElement("label");
     playerLabel.classList.add("game-labels");
-    playerLabel.textContent = "Player";
+    playerLabel.textContent = PlayerSetup.playerName;
 
-    playerContainer.appendChild(playerLabel)
+    playerContainer.appendChild(playerLabel);
 
     const botContainer = document.createElement("div");
     botContainer.classList.add("game-bot-container");
@@ -25,7 +26,7 @@ export function renderGame() {
     botLabel.classList.add("bot-labels");
     botLabel.textContent = "Beep Boop";
 
-    botContainer.appendChild(botLabel)
+    botContainer.appendChild(botLabel);
 
     renderComponents(playerContainer);
     renderComponents(botContainer, false);
@@ -58,31 +59,64 @@ function renderComponents(container, player = true) {
     generateAxisLabels(colLabels, rowLabels);
     if (player === true) {
         const playerBoard = PlayerSetup.playerBoard;
-        generateGrid(board, playerBoard);
+        generateGrid(board, playerBoard, true);
     } else {
         const botBoard = BotSetup.botBoard;
-        botBoard.randomize()
+        botBoard.randomize();
         generateGrid(board, botBoard);
     }
 }
 
-function generateGrid(container, gameboard, gridSize = 10) {
+function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement("div");
             cell.dataset.x = x;
             cell.dataset.y = y;
 
-            if (gameboard.board[x][y]) {
-                cell.classList.add("placed");
+            // Highlight the ships only on the player board
+            if (isPlayer) {
+                if (gameboard.board[x][y]) {
+                    cell.classList.add("placed");
+                }
             }
 
-            cell.addEventListener("click", () => {
-                console.log(`Clicked ${x}, ${y}`);
-            });
+            if (isPlayer === false) {
+                cell.addEventListener("click", () => {
+                    console.log(`Clicked ${x}, ${y}`);
+                    
+                    const attackedPosition = gameboard.board[x][y];
+                    BotSetup.selectedShip = attackedPosition.type
+
+                    if (attackedPosition === null) {
+                        cell.classList.add("miss-ship");
+                    } else {
+                        // If hit, mark cell orange
+                        cell.classList.add("hit-ship");
+                        attackedPosition.hit();
+
+                        // If sunk, mark entire ship red
+                        if (attackedPosition.isSunk()) {
+                            const cellsToHighlight = PlayerSetup.getHoverCells(
+                                x,
+                                y,
+                                BotSetup.selectedShip
+                            );
+                            console.log(cellsToHighlight);
+                            for (const [cx, cy] of cellsToHighlight) {
+                                highlight(cx,cy, container, "sunk-ship")
+                            }
+                        }
+                    }
+                });
+            }
 
             // Hover logic
-            cell.addEventListener("mouseenter", () => {});
+            cell.addEventListener("mouseenter", () => {
+                if (gameboard.board[x][y]) {
+                    cell.classList.add("hover-valid");
+                }
+            });
 
             cell.addEventListener("mouseleave", () => {});
 

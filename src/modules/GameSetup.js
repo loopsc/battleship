@@ -5,7 +5,6 @@ import { Gameboard } from "./objects/Gameboard";
 export const PlayerSetup = {
     selectedShip: "carrier",
     selectedOrientation: "horizontal",
-    // currentPlayer: "human",
     playerBoard: new Gameboard(),
     playerName: "",
 
@@ -23,11 +22,17 @@ export const PlayerSetup = {
      * @param {Number} startY Y coordinate of the cell user has hovered
      * @returns Array of the cells that the ship should occupy
      */
-    getHoverCells(startX, startY) {
-        const length = shipLengths[this.selectedShip];
+    getHoverCells(startX, startY, ship = "") {
+        let shipLength;
+
+        if (ship === "") {
+            shipLength = shipLengths[this.selectedShip];
+        } else {
+            shipLength = shipLengths[ship];
+        }
         const cellsArr = [];
 
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < shipLength; i++) {
             const x =
                 this.selectedOrientation === "horizontal" ? startX + i : startX;
             const y =
@@ -39,7 +44,7 @@ export const PlayerSetup = {
     },
 };
 
-
 export const BotSetup = {
-    botBoard: new Gameboard()
-}
+    botBoard: new Gameboard(),
+    selectedShip: "",
+};

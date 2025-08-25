@@ -213,7 +213,7 @@ function generateGrid(container, gridSize = 10) {
  * @param {*} container Grid div element
  * @param {String} styleClass CSS selected classname
  */
-function highlight(x, y, container, styleClass) {
+export function highlight(x, y, container, styleClass) {
     const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);
     if (cell) {
         cell.classList.add(styleClass);
