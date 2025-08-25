@@ -101,6 +101,25 @@ export class Gameboard {
         return true;
     }
 
+    randomize() {
+        const shipsToPlace = Object.keys(shipLengths);
+
+        for (const ship of shipsToPlace) {
+            let placed = false;
+
+            while (!placed) {
+                const direction = Math.random() < 0.5 ? "horizontal": "vertical";
+                const x = Math.floor(Math.random()* 10);
+                const y = Math.floor(Math.random()* 10);
+
+                if (this.canPlaceShips(x, y, ship, direction)) {
+                    this.placeShip(x,y,ship,direction);
+                    placed = true
+                }
+            }
+        }
+    }
+
     allShipsPlaced() {
         return this.ships.length === 5;
     }

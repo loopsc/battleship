@@ -1,22 +1,24 @@
 import { setupScreen } from "./renderSetup";
-import { GameSetup } from "./modules/GameSetup";
+import { renderGame } from "./renderGame";
+import { PlayerSetup } from "./modules/GameSetup";
 
 export function startGame() {
     const { startGameButton, playerNameInput } = setupScreen();
     startGameButton.addEventListener("click", () => {
-        // Error checks
-        if (!GameSetup.playerBoard.allShipsPlaced()) {
+        // Error check
+        if (!PlayerSetup.playerBoard.allShipsPlaced()) {
             throw new Error("Place all ships");
         }
 
         // Set a default name if none given
-        GameSetup.playerName = playerNameInput.value || "Player";
+        PlayerSetup.playerName = playerNameInput.value || "Player";
 
         clearScreen();
-        console.log(GameSetup.playerName)
+        renderGame();
     });
 }
 
 function clearScreen() {
-    document.body.innerHTML = "";
+    const main = document.getElementById("main");
+    main.innerHTML = "";
 }
