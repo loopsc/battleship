@@ -165,7 +165,6 @@ export class Gameboard {
                 x--;
             }
         }
-        console.log("getHead return: ", [[x, y]]);
         return [x, y];
     }
 }
