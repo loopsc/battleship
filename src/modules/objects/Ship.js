@@ -3,13 +3,15 @@ import { shipLengths } from "../constants";
 export class Ship {
     #hits;
 
-    constructor(ship) {
+    constructor(ship, orientation) {
         if (!shipLengths.hasOwnProperty(ship)) {
             throw new Error("Invalid ship type");
         }
         this.length = shipLengths[ship];
         this.type = ship;
+        this.orientation = orientation;
         this.#hits = 0;
+        this.id = crypto.randomUUID()
     }
 
     get hits() {

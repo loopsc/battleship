@@ -1,4 +1,4 @@
-import { PlayerSetup } from "./modules/GameSetup";
+import { PlayerSetup, getHoverCells } from "./modules/GameSetup";
 
 export function setupScreen() {
     return renderSetupScreen();
@@ -8,7 +8,7 @@ function renderSetupScreen() {
     const main = document.getElementById("main");
 
     const boardAndButtons = document.createElement("div");
-    boardAndButtons.id = "board-and-buttons"
+    boardAndButtons.id = "board-and-buttons";
 
     const boardWrapper = document.createElement("div");
     boardWrapper.classList.add("board-wrapper");
@@ -39,12 +39,12 @@ function renderSetupScreen() {
 
     generateButtons(buttonsMenu);
 
-    boardWrapper.append(corner, colLabels, rowLabels, board)
+    boardWrapper.append(corner, colLabels, rowLabels, board);
 
-    boardAndButtons.append(boardWrapper, buttonsMenu)
+    boardAndButtons.append(boardWrapper, buttonsMenu);
 
     main.appendChild(playerNameInput);
-    main.appendChild(boardAndButtons)
+    main.appendChild(boardAndButtons);
     main.appendChild(startGameButton);
 
     generateAxisLabels(colLabels, rowLabels);
@@ -139,7 +139,12 @@ function generateGrid(container, gridSize = 10) {
                 }
 
                 // Arra of cell coordinates that a ship will occupy
-                const highlightedCells = PlayerSetup.getHoverCells(x, y);
+                const highlightedCells = getHoverCells(
+                    x,
+                    y,
+                    PlayerSetup.selectedShip,
+                    PlayerSetup.selectedOrientation
+                );
 
                 // Do nothing if the ship cannot be placed there
                 if (
@@ -179,7 +184,7 @@ function generateGrid(container, gridSize = 10) {
                     return;
                 }
 
-                const highlightedCells = PlayerSetup.getHoverCells(x, y);
+                const highlightedCells = getHoverCells(x, y, PlayerSetup.selectedShip, PlayerSetup.selectedOrientation);
 
                 const validPlacement = PlayerSetup.playerBoard.canPlaceShips(
                     x,

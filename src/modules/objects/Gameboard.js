@@ -19,6 +19,10 @@ export class Gameboard {
     }
 
     receiveAttack(x, y) {
+        if (x === undefined || y === undefined) {
+            console.log(x, y);
+            throw new Error("Provide x and y coordinates");
+        }
         const target = this.board[x][y];
         // If miss
         if (target === null) this.missedShots.push([x, y]);
@@ -55,7 +59,7 @@ export class Gameboard {
         const existing = this.ships.find((s) => s.type === ship);
         if (existing) throw new Error("This ship is already on the board");
 
-        const newShip = new Ship(ship);
+        const newShip = new Ship(ship, direction);
         this.ships.push(newShip);
 
         for (let i = 0; i < shipLength; i++) {
@@ -108,13 +112,14 @@ export class Gameboard {
             let placed = false;
 
             while (!placed) {
-                const direction = Math.random() < 0.5 ? "horizontal": "vertical";
-                const x = Math.floor(Math.random()* 10);
-                const y = Math.floor(Math.random()* 10);
+                const direction =
+                    Math.random() < 0.5 ? "horizontal" : "vertical";
+                const x = Math.floor(Math.random() * 10);
+                const y = Math.floor(Math.random() * 10);
 
                 if (this.canPlaceShips(x, y, ship, direction)) {
-                    this.placeShip(x,y,ship,direction);
-                    placed = true
+                    this.placeShip(x, y, ship, direction);
+                    placed = true;
                 }
             }
         }
@@ -122,5 +127,35 @@ export class Gameboard {
 
     allShipsPlaced() {
         return this.ships.length === 5;
+    }
+
+    getHead(x, y, orientation) {
+        if (!orientation) {
+            console.log(orientation);
+            throw new Error("Provide a valid ship and orientation");
+        }
+
+        const ship = this.board[x][y];
+        if (!ship) throw new Error("No ship at given coordinates");
+
+        if (orientation === "vertical") {
+            while (
+                y > 0 &&
+                this.board[x][y - 1] &&
+                this.board[x][y - 1].id === ship.id
+            ) {
+                y--;
+            }
+        } else {
+            while (
+                x > 0 &&
+                this.board[x - 1][y] &&
+                this.board[x - 1][y].id === ship.id
+            ) {
+                x--;
+            }
+        }
+        console.log("getHead return: ", [[x,y]])
+        return [x,y];
     }
 }

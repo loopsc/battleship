@@ -1,4 +1,4 @@
-import { PlayerSetup, BotSetup } from "./modules/GameSetup";
+import { PlayerSetup, BotSetup, getHoverCells } from "./modules/GameSetup";
 import { Gameboard } from "./modules/objects/Gameboard";
 import { highlight } from "./renderSetup";
 
@@ -86,21 +86,26 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
                     console.log(`Clicked ${x}, ${y}`);
                     
                     const attackedPosition = gameboard.board[x][y];
-                    BotSetup.selectedShip = attackedPosition.type
+                    BotSetup.selectedShip = attackedPosition.type;
+                    BotSetup.selectedOrientation = attackedPosition.orientation;
 
                     if (attackedPosition === null) {
                         cell.classList.add("miss-ship");
+                        gameboard.receiveAttack(x,y)
                     } else {
                         // If hit, mark cell orange
                         cell.classList.add("hit-ship");
-                        attackedPosition.hit();
+                        gameboard.receiveAttack(x,y)
 
                         // If sunk, mark entire ship red
                         if (attackedPosition.isSunk()) {
-                            const cellsToHighlight = PlayerSetup.getHoverCells(
-                                x,
-                                y,
-                                BotSetup.selectedShip
+                            const [headX,headY] = gameboard.getHead(x,y,BotSetup.selectedOrientation)
+                            console.log(`headX: ${headX}. headY: ${headY}`)
+                            const cellsToHighlight = getHoverCells(
+                                headX,
+                                headY,
+                                BotSetup.selectedShip,
+                                BotSetup.selectedOrientation,
                             );
                             console.log(cellsToHighlight);
                             for (const [cx, cy] of cellsToHighlight) {

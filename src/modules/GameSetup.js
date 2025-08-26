@@ -15,36 +15,34 @@ export const PlayerSetup = {
             throw new Error("Invalid ship type");
         this.selectedShip = ship.toLowerCase();
     },
-
-    /**
-     *
-     * @param {Number} startX X coordinate of the cell user has hovered
-     * @param {Number} startY Y coordinate of the cell user has hovered
-     * @returns Array of the cells that the ship should occupy
-     */
-    getHoverCells(startX, startY, ship = "") {
-        let shipLength;
-
-        if (ship === "") {
-            shipLength = shipLengths[this.selectedShip];
-        } else {
-            shipLength = shipLengths[ship];
-        }
-        const cellsArr = [];
-
-        for (let i = 0; i < shipLength; i++) {
-            const x =
-                this.selectedOrientation === "horizontal" ? startX + i : startX;
-            const y =
-                this.selectedOrientation === "vertical" ? startY + i : startY;
-
-            cellsArr.push([x, y]);
-        }
-        return cellsArr;
-    },
 };
 
 export const BotSetup = {
     botBoard: new Gameboard(),
     selectedShip: "",
+    selectedOrientation: ""
 };
+
+/**
+ *
+ * @param {Number} startX X coordinate of the cell user has hovered
+ * @param {Number} startY Y coordinate of the cell user has hovered
+ * @returns Array of the cells that the ship should occupy
+ */
+export function getHoverCells(startX, startY, ship, orientation) {
+    if (!orientation || !ship) {
+        throw new Error("Provide a valid ship and orientation");
+    }
+
+    const shipLength = shipLengths[ship];
+
+    const cellsArr = [];
+
+    for (let i = 0; i < shipLength; i++) {
+        const x = orientation === "horizontal" ? startX + i : startX;
+        const y = orientation === "vertical" ? startY + i : startY;
+
+        cellsArr.push([x, y]);
+    }
+    return cellsArr;
+}
