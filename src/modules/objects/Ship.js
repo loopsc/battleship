@@ -2,6 +2,7 @@ import { shipLengths } from "../constants";
 
 export class Ship {
     #hits;
+    #hitMap;
 
     constructor(ship, orientation) {
         if (!shipLengths.hasOwnProperty(ship)) {
@@ -11,19 +12,25 @@ export class Ship {
         this.type = ship;
         this.orientation = orientation;
         this.#hits = 0;
-        this.id = crypto.randomUUID()
+        this.id = crypto.randomUUID();
+        this.#hitMap = Array(this.length).fill(false);
     }
 
     get hits() {
         return this.#hits;
     }
 
-    hit() {
-        this.#hits += 1;
+    hit(index) {
+        if (this.#hitMap[index]) {
+            // already hit this segment
+            return false;
+        }
+        this.#hitMap[index] = true;
+        this.#hits++;
+        return true;
     }
 
     isSunk() {
-        if (this.#hits === this.length) return true;
-        return false;
+        return this.#hits >= this.length;
     }
 }

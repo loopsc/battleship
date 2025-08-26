@@ -84,32 +84,38 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
             if (isPlayer === false) {
                 cell.addEventListener("click", () => {
                     console.log(`Clicked ${x}, ${y}`);
-                    
-                    const attackedPosition = gameboard.board[x][y];
-                    BotSetup.selectedShip = attackedPosition.type;
-                    BotSetup.selectedOrientation = attackedPosition.orientation;
+
+                    const attackedPosition = gameboard.board[x][y].ship;
 
                     if (attackedPosition === null) {
                         cell.classList.add("miss-ship");
-                        gameboard.receiveAttack(x,y)
+                        gameboard.receiveAttack(x, y);
                     } else {
+                        BotSetup.selectedShip = attackedPosition.type;
+                        BotSetup.selectedOrientation =
+                            attackedPosition.orientation;
+
                         // If hit, mark cell orange
                         cell.classList.add("hit-ship");
-                        gameboard.receiveAttack(x,y)
+                        gameboard.receiveAttack(x, y);
 
                         // If sunk, mark entire ship red
                         if (attackedPosition.isSunk()) {
-                            const [headX,headY] = gameboard.getHead(x,y,BotSetup.selectedOrientation)
-                            console.log(`headX: ${headX}. headY: ${headY}`)
+                            const [headX, headY] = gameboard.getHead(
+                                x,
+                                y,
+                                BotSetup.selectedOrientation
+                            );
+                            console.log(`headX: ${headX}. headY: ${headY}`);
                             const cellsToHighlight = getHoverCells(
                                 headX,
                                 headY,
                                 BotSetup.selectedShip,
-                                BotSetup.selectedOrientation,
+                                BotSetup.selectedOrientation
                             );
                             console.log(cellsToHighlight);
                             for (const [cx, cy] of cellsToHighlight) {
-                                highlight(cx,cy, container, "sunk-ship")
+                                highlight(cx, cy, container, "sunk-ship");
                             }
                         }
                     }

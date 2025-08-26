@@ -19,20 +19,30 @@ export class Gameboard {
     }
 
     receiveAttack(x, y) {
-        if (x === undefined || y === undefined) {
-            console.log(x, y);
+        if (x < 0 || x > 9 || y < 0 || y > 9) {
             throw new Error("Provide x and y coordinates");
         }
+
         const target = this.board[x][y];
         // If miss
-        if (target === null) this.missedShots.push([x, y]);
-        // If hit
-        if (target) {
-            target.hit();
+        if (!target) {
+            this.missedShots.push([x, y]);
+            return;
+        }
 
-            if (target.isSunk()) {
-                this.ships = this.ships.filter((ship) => ship !== target);
-            }
+        // If hit
+        const { ship, index } = target;
+
+        // Register a hit
+        const wasNewHit = ship.hit(index);
+        if (!wasNewHit) {
+            return;
+        }
+
+        // If sunk, remove ship from ships array
+        if (ship.isSunk()) {
+            this.ships = this.ships.filter((s) => s !== ship);
+            console.log(`${ship.type} has been sunk!`);
         }
     }
 
@@ -65,7 +75,7 @@ export class Gameboard {
         for (let i = 0; i < shipLength; i++) {
             const xCell = direction === "horizontal" ? x + i : x;
             const yCell = direction === "vertical" ? y + i : y;
-            this.board[xCell][yCell] = newShip;
+            this.board[xCell][yCell] = { ship: newShip, index: i };
         }
     }
 
@@ -155,7 +165,7 @@ export class Gameboard {
                 x--;
             }
         }
-        console.log("getHead return: ", [[x,y]])
-        return [x,y];
+        console.log("getHead return: ", [[x, y]]);
+        return [x, y];
     }
 }
