@@ -57,7 +57,9 @@ export class GameController {
         }
 
         if (label) {
-            label.textContent = `${PlayerSetup.playerName} attacked ${translateCoords(x,y)}: ${result}`
+            label.textContent = `${
+                PlayerSetup.playerName
+            } attacked ${translateCoords(x, y)}: ${result}`;
         }
 
         if (this.botBoard.isAllShipsSunk()) {
@@ -66,12 +68,12 @@ export class GameController {
             }, 0);
         }
 
-        this.#takeBotTurn();
+        this.#takeBotTurn(label);
 
         return result;
     }
 
-    botAttack() {
+    botAttack(label) {
         if (this.currentTurn !== "bot") return;
 
         let x, y, result;
@@ -112,6 +114,13 @@ export class GameController {
             }
         }
 
+        if (label) {
+            label.textContent = `${BotSetup.botName} attacked ${translateCoords(
+                x,
+                y
+            )}: ${result}`;
+        }
+
         if (this.playerBoard.isAllShipsSunk()) {
             console.log("Bot wins!");
             return;
@@ -120,10 +129,10 @@ export class GameController {
         this.currentTurn = "player";
     }
 
-    #takeBotTurn() {
+    #takeBotTurn(label) {
         this.currentTurn = "bot";
         setTimeout(() => {
-            this.botAttack();
+            this.botAttack(label);
         }, 500);
     }
 }
