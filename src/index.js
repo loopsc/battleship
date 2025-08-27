@@ -1,6 +1,6 @@
 import "./styles.css";
-import { startGame } from "./controller"
-import { renderGame } from "./renderGame";
+import { GameController, startGame } from "./controller"
 
-startGame()
+const gameController = new GameController()
+startGame(gameController)
 

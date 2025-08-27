@@ -1,9 +1,11 @@
-import { PlayerSetup, BotSetup, getHoverCells } from "./modules/GameSetup";
-import { Gameboard } from "./modules/objects/Gameboard";
-import { highlight } from "./renderSetup";
+import { PlayerSetup, BotSetup } from "./modules/GameSetup";
 
-export function renderGame() {
+export function renderGame(gameController) {
     const main = document.getElementById("main");
+
+    const gameMasterText = document.createElement("lable");
+    gameMasterText.classList.add("game-master-text");
+    gameMasterText.textContent = "Fire your first shot!";
 
     const parentContainer = document.createElement("div");
     parentContainer.classList.add("game-parent-container");
@@ -29,14 +31,20 @@ export function renderGame() {
     botContainer.appendChild(botLabel);
 
     renderComponents(playerContainer);
-    renderComponents(botContainer, false);
+    renderComponents(botContainer, false, gameController, gameMasterText);
 
     parentContainer.appendChild(playerContainer);
+    parentContainer.appendChild(gameMasterText);
     parentContainer.appendChild(botContainer);
 }
 
 // Creates the boards, labels, ships
-function renderComponents(container, player = true) {
+function renderComponents(
+    container,
+    player = true,
+    gameController = null,
+    gameMasterText
+) {
     const boardWrapper = document.createElement("div");
     boardWrapper.classList.add("board-wrapper");
 
@@ -63,11 +71,18 @@ function renderComponents(container, player = true) {
     } else {
         const botBoard = BotSetup.botBoard;
         botBoard.randomize();
-        generateGrid(board, botBoard);
+        generateGrid(board, botBoard, false, gameController, gameMasterText);
     }
 }
 
-function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
+function generateGrid(
+    container,
+    gameboard,
+    isPlayer = false,
+    gameController = null,
+    gameMasterText = null,
+    gridSize = 10
+) {
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement("div");
@@ -76,60 +91,41 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
 
             // Highlight the ships only on the player board
             if (isPlayer) {
+                cell.classList.add("player-cell");
+
                 if (gameboard.board[x][y]) {
                     cell.classList.add("placed");
                 }
             }
+            // Can only interact with bot board
+            else {
+                cell.classList.add("bot-cell");
 
-            if (isPlayer === false) {
                 cell.addEventListener("click", () => {
-                    console.log(`Clicked ${x}, ${y}`);
+                    if (
+                        !gameController ||
+                        gameController.currentTurn !== "player"
+                    )
+                        return;
 
-                    const attackedPosition = gameboard.board[x][y].ship;
-
-                    if (attackedPosition === null) {
-                        cell.classList.add("miss-ship");
-                        gameboard.receiveAttack(x, y);
-                    } else {
-                        BotSetup.selectedShip = attackedPosition.type;
-                        BotSetup.selectedOrientation =
-                            attackedPosition.orientation;
-
-                        // If hit, mark cell orange
-                        cell.classList.add("hit-ship");
-                        gameboard.receiveAttack(x, y);
-
-                        // If sunk, mark entire ship red
-                        if (attackedPosition.isSunk()) {
-                            const [headX, headY] = gameboard.getHead(
-                                x,
-                                y,
-                                BotSetup.selectedOrientation
-                            );
-                            console.log(`headX: ${headX}. headY: ${headY}`);
-                            const cellsToHighlight = getHoverCells(
-                                headX,
-                                headY,
-                                BotSetup.selectedShip,
-                                BotSetup.selectedOrientation
-                            );
-                            console.log(cellsToHighlight);
-                            for (const [cx, cy] of cellsToHighlight) {
-                                highlight(cx, cy, container, "sunk-ship");
-                            }
-                        }
-                    }
+                    // Perform the attack
+                    gameController.playerAttack(
+                        x,
+                        y,
+                        container,
+                        gameMasterText
+                    );
                 });
             }
 
             // Hover logic
             cell.addEventListener("mouseenter", () => {
-                if (gameboard.board[x][y]) {
-                    cell.classList.add("hover-valid");
-                }
+                cell.classList.add("ingame-hover");
             });
 
-            cell.addEventListener("mouseleave", () => {});
+            cell.addEventListener("mouseleave", () => {
+                cell.classList.remove("ingame-hover");
+            });
 
             container.appendChild(cell);
         }

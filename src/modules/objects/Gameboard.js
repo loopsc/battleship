@@ -23,27 +23,35 @@ export class Gameboard {
             throw new Error("Provide x and y coordinates");
         }
 
-        const target = this.board[x][y];
-        // If miss
-        if (!target) {
+        const cell = this.board[x][y];
+
+        // Already attacked cell (miss or already-hit segment)
+        if (
+            cell === "miss" ||
+            (cell && cell.ship && cell.ship.isHit(cell.index))
+        ) {
+            return "already-attacked";
+        }
+
+        // Miss
+        if (cell === null) {
+            this.board[x][y] = "miss";
             this.missedShots.push([x, y]);
-            return;
+            return "miss";
         }
 
-        // If hit
-        const { ship, index } = target;
+        // Hit
+        const { ship, index } = cell;
+        ship.hit(index);
 
-        // Register a hit
-        const wasNewHit = ship.hit(index);
-        if (!wasNewHit) {
-            return;
-        }
-
-        // If sunk, remove ship from ships array
+        // Sunk
         if (ship.isSunk()) {
             this.ships = this.ships.filter((s) => s !== ship);
             console.log(`${ship.type} has been sunk!`);
+            return "sunk";
         }
+
+        return "hit";
     }
 
     /**
@@ -140,31 +148,24 @@ export class Gameboard {
     }
 
     getHead(x, y, orientation) {
-        if (!orientation) {
-            console.log(orientation);
+        if (!orientation)
             throw new Error("Provide a valid ship and orientation");
-        }
 
-        const ship = this.board[x][y];
-        if (!ship) throw new Error("No ship at given coordinates");
+        const cell = this.board[x][y];
+        if (!cell) throw new Error("No ship at given coordinates");
+
+        const ship = cell.ship; // extract Ship object from cell
 
         if (orientation === "vertical") {
-            while (
-                y > 0 &&
-                this.board[x][y - 1] &&
-                this.board[x][y - 1].id === ship.id
-            ) {
+            while (y > 0 && this.board[x][y - 1]?.ship === ship) {
                 y--;
             }
         } else {
-            while (
-                x > 0 &&
-                this.board[x - 1][y] &&
-                this.board[x - 1][y].id === ship.id
-            ) {
+            while (x > 0 && this.board[x - 1][y]?.ship === ship) {
                 x--;
             }
         }
+
         return [x, y];
     }
 }

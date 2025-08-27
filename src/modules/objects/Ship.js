@@ -30,6 +30,11 @@ export class Ship {
         return true;
     }
 
+    // Return the boolean at a given index of the hitmap
+    isHit(index) {
+        return this.#hitMap[index]
+    }
+
     isSunk() {
         return this.#hits >= this.length;
     }
