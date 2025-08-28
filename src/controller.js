@@ -1,6 +1,6 @@
-import { setupScreen, highlight } from "./renderSetup";
-import { renderGame } from "./renderGame";
-import { BotSetup, PlayerSetup, getHoverCells } from "./modules/GameSetup";
+import { setupScreen, highlight } from "./modules/ui/renderSetup";
+import { renderGame } from "./modules/ui/renderGame";
+import { BotSetup, PlayerSetup, getHoverCells } from "./modules/game-configs";
 
 export function startGame(gameController) {
     const { startGameButton, playerNameInput } = setupScreen();
@@ -30,7 +30,13 @@ export class GameController {
 
         const result = this.botBoard.receiveAttack(x, y);
 
-        if (result === "already-attacked") return;
+        if (result === "already-attacked") {
+            if (label) {
+                if (result === "already-attacked")
+                label.textContent = "Hit another spot";
+            }
+            return;
+        }
 
         // Update visuals
         const cell = container.querySelector(`[data-x="${x}"][data-y="${y}"]`);

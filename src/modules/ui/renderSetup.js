@@ -1,4 +1,4 @@
-import { PlayerSetup, getHoverCells } from "./modules/GameSetup";
+import { PlayerSetup, getHoverCells } from "../game-configs";
 
 export function setupScreen() {
     return renderSetupScreen();
@@ -184,7 +184,12 @@ function generateGrid(container, gridSize = 10) {
                     return;
                 }
 
-                const highlightedCells = getHoverCells(x, y, PlayerSetup.selectedShip, PlayerSetup.selectedOrientation);
+                const highlightedCells = getHoverCells(
+                    x,
+                    y,
+                    PlayerSetup.selectedShip,
+                    PlayerSetup.selectedOrientation
+                );
 
                 const validPlacement = PlayerSetup.playerBoard.canPlaceShips(
                     x,

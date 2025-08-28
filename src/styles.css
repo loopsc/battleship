@@ -196,7 +196,7 @@ body {
     background-color: red !important;
 }
 
-.ingame-hover {
+.bot-cell.ingame-hover {
     background-color: var(--ocean-blue-light) !important;
 }
 
@@ -220,5 +220,6 @@ body {
     width: 400px;
     color: var(--mega-white);
     flex-shrink: 0;
-    flex-grow: 0
+    flex-grow: 0;
+    text-align: center;
 }
