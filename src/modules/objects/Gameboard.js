@@ -3,8 +3,6 @@ import { shipLengths } from "../constants";
 
 export class Gameboard {
     constructor() {
-        // Create a 2d array of null cells
-        // Horizontal axis is x and horizontal axis is y
         this.board = Array(10)
             .fill(null)
             .map(() => Array(10).fill(null));
@@ -13,11 +11,21 @@ export class Gameboard {
         this.missedShots = [];
     }
 
+    /**
+     * 
+     * @returns boolean value if array containing ships is empty
+     */
     isAllShipsSunk() {
         if (this.ships.length === 0) return true;
         return false;
     }
 
+    /**
+     * 
+     * @param {Number} x x coordinate
+     * @param {Number} y y coordinate
+     * @returns hit, miss, sunk or already-attacked
+     */
     receiveAttack(x, y) {
         if (x < 0 || x > 9 || y < 0 || y > 9) {
             throw new Error("Provide x and y coordinates");

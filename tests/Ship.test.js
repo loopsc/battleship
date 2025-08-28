@@ -1,6 +1,6 @@
 import { Ship } from "../src/modules/objects/Ship";
 
-describe("Creating ships", () => {
+describe("Test for Ship object class", () => {
     test("Creating the 5 types of ships. Testing types and length", () => {
         const carrier = new Ship("carrier");
         const battleship = new Ship("battleship");
@@ -36,14 +36,14 @@ describe("Creating ships", () => {
     });
 
     test("Ship is sunk", () => {
-        const ship = new Ship("destroyer");
+        const destroyer = new Ship("destroyer");
         const sub = new Ship("submarine");
 
-        expect(ship.isSunk()).toBe(false);
-        for (let i = 0; i < ship.length; i++) {
-            ship.hit();
+        expect(destroyer.isSunk()).toBe(false);
+        for (let i = 0; i < destroyer.length; i++) {
+            destroyer.hit(i);
         }
-        expect(ship.isSunk()).toBe(true);
+        expect(destroyer.isSunk()).toBe(true);
         expect(sub.isSunk()).toBe(false);
     });
 
@@ -52,4 +52,16 @@ describe("Creating ships", () => {
             const ship = new Ship("dolphin");
         }).toThrow("Invalid ship type");
     });
+
+    test("isHit() method returns true for sections of the ship that has been hit", () => {
+        const ship = new Ship("carrier", "horizontal")
+        ship.hit(0);
+        ship.hit(3);
+
+        expect(ship.isHit(0)).toBe(true)
+        expect(ship.isHit(1)).toBe(false)
+        expect(ship.isHit(2)).toBe(false)
+        expect(ship.isHit(3)).toBe(true)
+        expect(ship.isHit(4)).toBe(false)
+    })
 });
