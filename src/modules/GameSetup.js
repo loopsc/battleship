@@ -19,7 +19,7 @@ export const PlayerSetup = {
 
 export const BotSetup = {
     botBoard: new Gameboard(),
-    botName: "Jerome",
+    botName: "Beep Boop",
     selectedShip: "",
     selectedOrientation: ""
 };
