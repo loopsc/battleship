@@ -1,0 +1,7 @@
+- Refactor code to be cleaner. Passing a lot of labels around...
+- Rename some classes, functions, files...
+- More testing. Make sure refactor hasn't broken tests.
+- Make the bot attack smarter
+
+
+git log:

@@ -23,6 +23,11 @@ export class GameController {
         this.playerBoard = PlayerSetup.playerBoard;
         this.botBoard = BotSetup.botBoard;
         this.currentTurn = "player";
+
+        this.botAttackMode = 0;
+        this.attackQueue = [];
+        this.initialHitCell = [];
+        this.attackPatternDirection = "";
     }
 
     playerAttack(x, y, container, label) {
@@ -77,10 +82,44 @@ export class GameController {
         if (this.currentTurn !== "bot") return;
 
         let x, y, result;
+        let previousResult = "miss";
         do {
             x = Math.floor(Math.random() * 10);
             y = Math.floor(Math.random() * 10);
-            result = this.playerBoard.receiveAttack(x, y);
+
+            // Searching for ships
+            if (this.botAttackMode === 0) {
+                result = this.playerBoard.receiveAttack(x, y);
+                previousResult = result;
+                // If hit
+                if (result === "hit") {
+                    this.initialHitCell.push([x, y]);
+                    this.botAttackMode = 1;
+
+                    // Queue an attack to all cardinal directions
+                    this.attackQueue.push([x, y - 1]);
+                    this.attackQueue.push([x + 1, y]);
+                    this.attackQueue.push([x, y + 1]);
+                    this.attackQueue.push([x - 1, y]);
+                }
+
+                // Smart attack. Previous attack was a hit. Ship has not been sunk
+            } else if (this.botAttack === 1 && previousResult === "hit") {
+                const [cx, cy] = this.attackQueue.shift();
+                result = this.playerBoard.receiveAttack(cx, cy);
+                previousResult = result;
+            }
+            // Smart attack. Previous attack was a miss. Ship has not been sunk
+            else if (this.botAttack === 1 && previousResult === "miss") {
+
+            }
+            // Not first hit and hit last shot was a hit
+            else if (
+                this.botAttack === 1 &&
+                previousResult === "hit" &&
+                this.attackQueue !== 0
+            ) {
+            }
         } while (result === "already-attacked");
 
         console.log(`Bot attacked ${x},${y}: ${result}`);
