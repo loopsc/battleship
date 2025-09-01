@@ -23,6 +23,11 @@ export class GameController {
         this.playerBoard = PlayerSetup.playerBoard;
         this.botBoard = BotSetup.botBoard;
         this.currentTurn = "player";
+
+        this.botAttackMode = 0;
+        this.attackQueue = [];
+        this.initialHitCell = [];
+        this.attackPatternDirection = "";
     }
 
     playerAttack(x, y, container, label) {
@@ -66,6 +71,9 @@ export class GameController {
             label.textContent = `${
                 PlayerSetup.playerName
             } attacked ${translateCoords(x, y)}: ${result}`;
+            label.textContent = `${
+                PlayerSetup.playerName
+            } attacked ${translateCoords(x, y)}: ${result}`;
         }
 
         if (this.botBoard.isAllShipsSunk()) {
@@ -74,6 +82,7 @@ export class GameController {
             }, 0);
         }
 
+        this.#takeBotTurn(label);
         this.#takeBotTurn(label);
 
         return result;
@@ -127,6 +136,13 @@ export class GameController {
             )}: ${result}`;
         }
 
+        if (label) {
+            label.textContent = `${BotSetup.botName} attacked ${translateCoords(
+                x,
+                y
+            )}: ${result}`;
+        }
+
         if (this.playerBoard.isAllShipsSunk()) {
             console.log("Bot wins!");
             return;
@@ -139,7 +155,7 @@ export class GameController {
         this.currentTurn = "bot";
         setTimeout(() => {
             this.botAttack(label);
-        }, 500);
+        }, 1000);
     }
 }
 
