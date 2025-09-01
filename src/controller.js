@@ -23,11 +23,6 @@ export class GameController {
         this.playerBoard = PlayerSetup.playerBoard;
         this.botBoard = BotSetup.botBoard;
         this.currentTurn = "player";
-
-        this.botAttackMode = 0;
-        this.attackQueue = [];
-        this.initialHitCell = [];
-        this.attackPatternDirection = "";
     }
 
     playerAttack(x, y, container, label) {
@@ -124,13 +119,6 @@ export class GameController {
                 );
                 cell?.classList.add("sunk-ship");
             }
-        }
-
-        if (label) {
-            label.textContent = `${BotSetup.botName} attacked ${translateCoords(
-                x,
-                y
-            )}: ${result}`;
         }
 
         if (label) {
