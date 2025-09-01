@@ -1,28 +1,21 @@
-import { setupScreen, highlight } from "../ui/renderSetup";
-import { renderGame } from "../ui/renderGame";
+import { highlight } from "../ui/renderSetup";
 import { BotSetup, PlayerSetup } from "../core/game-configs";
 import { translateCoords, getHoverCells } from "../utils/utils";
 
-
-
-export class GameController {
+class GameController {
     constructor() {
         this.playerBoard = PlayerSetup.playerBoard;
         this.botBoard = BotSetup.botBoard;
         this.currentTurn = "player";
     }
 
-    playerAttack(x, y, container, label) {
+    playerAttack(x, y, container) {
         if (this.currentTurn !== "player") return;
 
         const result = this.botBoard.receiveAttack(x, y);
 
         if (result === "already-attacked") {
-            if (label) {
-                if (result === "already-attacked")
-                    label.textContent = "Hit another spot";
-            }
-            return;
+            return "already-attacked";
         }
 
         // Update visuals
@@ -49,24 +42,18 @@ export class GameController {
             }
         }
 
-        if (label) {
-            label.textContent = `${
-                PlayerSetup.playerName
-            } attacked ${translateCoords(x, y)}: ${result}`;
-        }
-
         if (this.botBoard.isAllShipsSunk()) {
             setTimeout(() => {
                 alert(`${PlayerSetup.playerName} has won!`);
             }, 0);
         }
 
-        this.#takeBotTurn(label);
+        this.#takeBotTurn();
 
         return result;
     }
 
-    botAttack(label) {
+    botAttack() {
         if (this.currentTurn !== "bot") return;
 
         let x, y, result;
@@ -107,25 +94,22 @@ export class GameController {
             }
         }
 
-        if (label) {
-            label.textContent = `${BotSetup.botName} attacked ${translateCoords(
-                x,
-                y
-            )}: ${result}`;
-        }
-
         if (this.playerBoard.isAllShipsSunk()) {
             console.log("Bot wins!");
             return;
         }
 
         this.currentTurn = "player";
+
+        return result;
     }
 
-    #takeBotTurn(label) {
+    #takeBotTurn() {
         this.currentTurn = "bot";
         setTimeout(() => {
-            this.botAttack(label);
-        }, 1000);
+            this.botAttack();
+        }, 500);
     }
 }
+
+export const gameController = new GameController();

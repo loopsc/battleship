@@ -1,6 +1,8 @@
 import { PlayerSetup, BotSetup } from "../core/game-configs";
+import { gameController } from "../core/GameController";
+import { translateCoords } from "../utils/utils";
 
-export function renderGame(gameController) {
+export function renderGame() {
     const main = document.getElementById("main");
 
     const gameMasterText = document.createElement("lable");
@@ -31,7 +33,7 @@ export function renderGame(gameController) {
     botContainer.appendChild(botLabel);
 
     renderComponents(playerContainer);
-    renderComponents(botContainer, false, gameController, gameMasterText);
+    renderComponents(botContainer, false);
 
     parentContainer.appendChild(playerContainer);
     parentContainer.appendChild(gameMasterText);
@@ -39,12 +41,7 @@ export function renderGame(gameController) {
 }
 
 // Creates the boards, labels, ships
-function renderComponents(
-    container,
-    player = true,
-    gameController = null,
-    gameMasterText
-) {
+function renderComponents(container, player = true) {
     const boardWrapper = document.createElement("div");
     boardWrapper.classList.add("board-wrapper");
 
@@ -71,18 +68,11 @@ function renderComponents(
     } else {
         const botBoard = BotSetup.botBoard;
         botBoard.randomize();
-        generateGrid(board, botBoard, false, gameController, gameMasterText);
+        generateGrid(board, botBoard, false);
     }
 }
 
-function generateGrid(
-    container,
-    gameboard,
-    isPlayer = false,
-    gameController = null,
-    gameMasterText = null,
-    gridSize = 10
-) {
+function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
     for (let y = 0; y < gridSize; y++) {
         for (let x = 0; x < gridSize; x++) {
             const cell = document.createElement("div");
@@ -102,19 +92,21 @@ function generateGrid(
                 cell.classList.add("bot-cell");
 
                 cell.addEventListener("click", () => {
-                    if (
-                        !gameController ||
-                        gameController.currentTurn !== "player"
-                    )
-                        return;
+                    if (gameController.currentTurn !== "player") return;
+
+                    const gameMasterText =
+                        document.querySelector(".game-master-text");
 
                     // Perform the attack
-                    gameController.playerAttack(
-                        x,
-                        y,
-                        container,
-                        gameMasterText
-                    );
+                    const result = gameController.playerAttack(x, y, container);
+
+                    if (result === "already-attacked") {
+                        gameMasterText.textContent = "Hit somewhere else";
+                    } else {
+                        gameMasterText.textContent = `${
+                            PlayerSetup.playerName
+                        } attacked ${translateCoords(x, y)}: ${result}`;
+                    }
                 });
             }
 
