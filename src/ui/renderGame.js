@@ -1,4 +1,4 @@
-import { PlayerSetup, BotSetup } from "../game-configs";
+import { PlayerSetup, BotSetup } from "../core/game-configs";
 
 export function renderGame(gameController) {
     const main = document.getElementById("main");

@@ -1,5 +1,5 @@
 import { Ship } from "./Ship";
-import { shipLengths } from "../constants";
+import { shipLengths } from "./constants";
 
 export class Gameboard {
     constructor() {
@@ -12,7 +12,7 @@ export class Gameboard {
     }
 
     /**
-     * 
+     *
      * @returns boolean value if array containing ships is empty
      */
     isAllShipsSunk() {
@@ -21,7 +21,7 @@ export class Gameboard {
     }
 
     /**
-     * 
+     *
      * @param {Number} x x coordinate
      * @param {Number} y y coordinate
      * @returns hit, miss, sunk or already-attacked

@@ -5,7 +5,7 @@ module.exports = merge(common, {
     mode: 'development',
     devtool: "eval-source-map",
     devServer: {
-        watchFiles: ["./src/template.html"],
+        watchFiles: ["./src/app/template.html"],
         open: true
     },
   });

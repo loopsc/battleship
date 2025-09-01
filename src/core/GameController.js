@@ -1,22 +1,9 @@
-import { setupScreen, highlight } from "./modules/ui/renderSetup";
-import { renderGame } from "./modules/ui/renderGame";
-import { BotSetup, PlayerSetup, getHoverCells } from "./modules/game-configs";
+import { setupScreen, highlight } from "../ui/renderSetup";
+import { renderGame } from "../ui/renderGame";
+import { BotSetup, PlayerSetup } from "../core/game-configs";
+import { translateCoords, getHoverCells } from "../utils/utils";
 
-export function startGame(gameController) {
-    const { startGameButton, playerNameInput } = setupScreen();
-    startGameButton.addEventListener("click", () => {
-        // Error check
-        if (!PlayerSetup.playerBoard.allShipsPlaced()) {
-            throw new Error("Place all ships");
-        }
 
-        // Set a default name if none given
-        PlayerSetup.playerName = playerNameInput.value || "Player";
-
-        clearScreen();
-        renderGame(gameController);
-    });
-}
 
 export class GameController {
     constructor() {
@@ -33,7 +20,7 @@ export class GameController {
         if (result === "already-attacked") {
             if (label) {
                 if (result === "already-attacked")
-                label.textContent = "Hit another spot";
+                    label.textContent = "Hit another spot";
             }
             return;
         }
@@ -141,23 +128,4 @@ export class GameController {
             this.botAttack(label);
         }, 1000);
     }
-}
-
-function clearScreen() {
-    const main = document.getElementById("main");
-    main.innerHTML = "";
-}
-/**
- * Convert numeric coordinates to Battleship-style coordinates
- * @param {number} x - 0–9 column index
- * @param {number} y - 0–9 row index
- * @returns {string} Example: "A1", "D5", "J10"
- */
-function translateCoords(x, y) {
-    if (x < 0 || x > 9 || y < 0 || y > 9) {
-        throw new Error("Coordinates must be between 0 and 9");
-    }
-    const letter = String.fromCharCode(65 + x);
-    const number = y + 1;
-    return `${letter}${number}`;
 }

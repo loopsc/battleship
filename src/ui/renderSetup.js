@@ -1,4 +1,5 @@
-import { PlayerSetup, getHoverCells } from "../game-configs";
+import { PlayerSetup } from "../core/game-configs";
+import { getHoverCells } from "../utils/utils"
 
 export function setupScreen() {
     return renderSetupScreen();

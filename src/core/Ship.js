@@ -1,4 +1,4 @@
-import { shipLengths } from "../constants";
+import { shipLengths } from "./constants";
 
 export class Ship {
     #hits;
@@ -32,7 +32,7 @@ export class Ship {
 
     // Return the boolean at a given index of the hitmap
     isHit(index) {
-        return this.#hitMap[index]
+        return this.#hitMap[index];
     }
 
     isSunk() {
