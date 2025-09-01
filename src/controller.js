@@ -75,7 +75,6 @@ export class GameController {
         }
 
         this.#takeBotTurn(label);
-        this.#takeBotTurn(label);
 
         return result;
     }
