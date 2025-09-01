@@ -1,6 +1,6 @@
 import { highlight } from "../ui/renderSetup";
 import { BotSetup, PlayerSetup } from "../core/game-configs";
-import { translateCoords, getHoverCells } from "../utils/utils";
+import { getHoverCells } from "../utils/utils";
 
 class GameController {
     constructor() {

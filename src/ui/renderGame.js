@@ -79,7 +79,7 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
             cell.dataset.x = x;
             cell.dataset.y = y;
 
-            // Highlight the ships only on the player board
+            // Interactions on the player board
             if (isPlayer) {
                 cell.classList.add("player-cell");
 
@@ -87,7 +87,7 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
                     cell.classList.add("placed");
                 }
             }
-            // Can only interact with bot board
+            // Interactions on the bot board
             else {
                 cell.classList.add("bot-cell");
 
