@@ -71,9 +71,6 @@ export class GameController {
             label.textContent = `${
                 PlayerSetup.playerName
             } attacked ${translateCoords(x, y)}: ${result}`;
-            label.textContent = `${
-                PlayerSetup.playerName
-            } attacked ${translateCoords(x, y)}: ${result}`;
         }
 
         if (this.botBoard.isAllShipsSunk()) {
