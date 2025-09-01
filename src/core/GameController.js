@@ -1,6 +1,7 @@
 import { highlight } from "../ui/renderSetup";
 import { BotSetup, PlayerSetup } from "../core/game-configs";
 import { getHoverCells } from "../utils/utils";
+import { translateCoords } from "../utils/utils";
 
 class GameController {
     constructor() {
@@ -93,9 +94,16 @@ class GameController {
                 cell?.classList.add("sunk-ship");
             }
         }
+        const gameText = document.querySelector(".game-master-text");
+        if (gameText) {
+            gameText.textContent = `${
+                BotSetup.botName
+            } attacked ${translateCoords(x, y)}: ${result}`;
+        }
 
+        // Check if game is over and bot wins
         if (this.playerBoard.isAllShipsSunk()) {
-            console.log("Bot wins!");
+            alert("Bot wins");
             return;
         }
 
