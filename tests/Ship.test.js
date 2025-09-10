@@ -1,4 +1,4 @@
-import { Ship } from "../src/modules/objects/Ship";
+import { Ship } from "../src/core/Ship";
 
 describe("Test for Ship object class", () => {
     test("Creating the 5 types of ships. Testing types and length", () => {
@@ -54,14 +54,14 @@ describe("Test for Ship object class", () => {
     });
 
     test("isHit() method returns true for sections of the ship that has been hit", () => {
-        const ship = new Ship("carrier", "horizontal")
+        const ship = new Ship("carrier", "horizontal");
         ship.hit(0);
         ship.hit(3);
 
-        expect(ship.isHit(0)).toBe(true)
-        expect(ship.isHit(1)).toBe(false)
-        expect(ship.isHit(2)).toBe(false)
-        expect(ship.isHit(3)).toBe(true)
-        expect(ship.isHit(4)).toBe(false)
-    })
+        expect(ship.isHit(0)).toBe(true);
+        expect(ship.isHit(1)).toBe(false);
+        expect(ship.isHit(2)).toBe(false);
+        expect(ship.isHit(3)).toBe(true);
+        expect(ship.isHit(4)).toBe(false);
+    });
 });

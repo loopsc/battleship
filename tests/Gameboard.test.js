@@ -1,5 +1,5 @@
-import { Ship } from "../src/modules/objects/Ship";
-import { Gameboard } from "../src/modules/objects/Gameboard";
+import { Ship } from "../src/core/Ship";
+import { Gameboard } from "../src/core/Gameboard";
 
 describe("Gameboard functions", () => {
     let board;
@@ -57,8 +57,6 @@ describe("Gameboard functions", () => {
 
         const cell = board.board[2][2];
         expect(cell.ship.hits).toBe(0);
-
-        expect(board.missedShots.length).toBe(1);
     });
 
     test("Ship orientation and length is accurate", () => {

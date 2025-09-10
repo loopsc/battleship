@@ -55,7 +55,7 @@ class GameController {
             }, 0);
         }
 
-        this.#takeBotTurn();
+        this.takeBotTurn();
 
         return result;
     }
@@ -89,7 +89,7 @@ class GameController {
                     this.discoveredOrientation = "horizontal";
             }
 
-            this.#enqueueAdjacentCells(x, y);
+            this.enqueueAdjacentCells(x, y);
         } else if (result === "sunk") {
             // Create a new array of coordinates of cells which have a ship and are not sunk
             this.botHits = this.botHits.filter(([x, y]) => {
@@ -102,7 +102,7 @@ class GameController {
             this.botTargets = [];
             this.discoveredOrientation = null;
             for (const [dx, dy] of this.botHits) {
-                this.#enqueueAdjacentCells(dx, dy);
+                this.enqueueAdjacentCells(dx, dy);
             }
         }
 
@@ -151,14 +151,14 @@ class GameController {
         return result;
     }
 
-    #takeBotTurn() {
+    takeBotTurn() {
         this.currentTurn = "bot";
         setTimeout(() => {
             this.botAttack();
         }, 500);
     }
 
-    #enqueueAdjacentCells(x, y) {
+    enqueueAdjacentCells(x, y) {
         let candidates = [];
 
         if (this.discoveredOrientation === "vertical") {

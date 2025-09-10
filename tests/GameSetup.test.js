@@ -1,5 +1,6 @@
-import { Gameboard } from "../src/modules/objects/Gameboard";
-import { PlayerSetup,BotSetup, getHoverCells } from "../src/modules/GameSetup";
+import { Gameboard } from "../src/core/Gameboard";
+import { PlayerSetup, BotSetup } from "../src/core/game-configs";
+import { getHoverCells } from "../src/utils/utils";
 
 describe("Game Setup functions", () => {
     test("Initial state", () => {
@@ -8,7 +9,7 @@ describe("Game Setup functions", () => {
         expect(PlayerSetup.playerBoard).toBeInstanceOf(Gameboard);
 
         expect(BotSetup.botBoard).toBeInstanceOf(Gameboard);
-        expect(BotSetup.botName).toBe("Jerome");
+        expect(BotSetup.botName).toBe("Beep Boop");
         expect(BotSetup.selectedShip).toBe("");
         expect(BotSetup.selectedOrientation).toBe("");
 
