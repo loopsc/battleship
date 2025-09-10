@@ -8,7 +8,6 @@ export class Gameboard {
             .map(() => Array(10).fill(null));
         // Keep track of placed ships
         this.ships = [];
-        this.missedShots = [];
     }
 
     /**
@@ -44,7 +43,6 @@ export class Gameboard {
         // Miss
         if (cell === null) {
             this.board[x][y] = "miss";
-            this.missedShots.push([x, y]);
             return "miss";
         }
 
