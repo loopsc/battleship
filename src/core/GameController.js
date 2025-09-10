@@ -8,6 +8,11 @@ class GameController {
         this.playerBoard = PlayerSetup.playerBoard;
         this.botBoard = BotSetup.botBoard;
         this.currentTurn = "player";
+
+        // Successful hits on a ship that is not sunk yet
+        this.botHits = [];
+        // Cells to hit next
+        this.botTargets = [];
     }
 
     playerAttack(x, y, container) {
@@ -58,13 +63,37 @@ class GameController {
         if (this.currentTurn !== "bot") return;
 
         let x, y, result;
-        do {
+
+        if (this.botTargets.length > 0) {
+            [x, y] = this.botTargets.shift();
+        } else {
             x = Math.floor(Math.random() * 10);
             y = Math.floor(Math.random() * 10);
-            result = this.playerBoard.receiveAttack(x, y);
-        } while (result === "already-attacked");
+        }
 
-        console.log(`Bot attacked ${x},${y}: ${result}`);
+        result = this.playerBoard.receiveAttack(x, y);
+
+        if (result === "already-attacked") {
+            return this.botAttack();
+        }
+
+        if (result === "hit") {
+            this.botHits.push([x, y]);
+            this.#enqueueAdjacentCells(x, y);
+        } else if (result === "sunk") {
+            // Create a new array of coordinates of cells which have a ship and are not sunk
+            this.botHits = this.botHits.filter(([x, y]) => {
+                const cell = this.playerBoard.board[x][y];
+                // Check that the cell has a ship object in the cell and that it is not sunk
+                return cell?.ship && !cell.ship.isSunk();
+            });
+
+            // Reset cells to target
+            this.botTargets = [];
+            for (const [dx, dy] of this.botHits) {
+                this.#enqueueAdjacentCells(dx, dy);
+            }
+        }
 
         // Update visuals
         const playerCell = document.querySelector(
@@ -108,7 +137,6 @@ class GameController {
         }
 
         this.currentTurn = "player";
-
         return result;
     }
 
@@ -117,6 +145,28 @@ class GameController {
         setTimeout(() => {
             this.botAttack();
         }, 500);
+    }
+
+    #enqueueAdjacentCells(x, y) {
+        const candidates = [
+            [x - 1, y],
+            [x + 1, y],
+            [x, y - 1],
+            [x, y + 1],
+        ];
+
+        for (const [dx, dy] of candidates) {
+            if (
+                dx >= 0 &&
+                dx < 10 &&
+                dy >= 0 &&
+                dy < 10 &&
+                // Prevent duplicates
+                !this.botTargets.some(([hx, hy]) => hx === dx && hy === dy)
+            ) {
+                this.botTargets.push([dx, dy]);
+            }
+        }
     }
 }
 
