@@ -13,6 +13,7 @@ class GameController {
         this.botHits = [];
         // Cells to hit next
         this.botTargets = [];
+        this.discoveredOrientation = null;
     }
 
     playerAttack(x, y, container) {
@@ -79,6 +80,15 @@ class GameController {
 
         if (result === "hit") {
             this.botHits.push([x, y]);
+
+            if (this.botHits.length >= 2 && !this.discoveredOrientation) {
+                const [firstAttack, secondAttack] = this.botHits.slice(-2);
+                if (firstAttack[0] === secondAttack[0])
+                    this.discoveredOrientation = "vertical";
+                else if (firstAttack[1] === secondAttack[1])
+                    this.discoveredOrientation = "horizontal";
+            }
+
             this.#enqueueAdjacentCells(x, y);
         } else if (result === "sunk") {
             // Create a new array of coordinates of cells which have a ship and are not sunk
@@ -90,6 +100,7 @@ class GameController {
 
             // Reset cells to target
             this.botTargets = [];
+            this.discoveredOrientation = null;
             for (const [dx, dy] of this.botHits) {
                 this.#enqueueAdjacentCells(dx, dy);
             }
@@ -148,12 +159,16 @@ class GameController {
     }
 
     #enqueueAdjacentCells(x, y) {
-        const candidates = [
-            [x - 1, y],
-            [x + 1, y],
-            [x, y - 1],
-            [x, y + 1],
-        ];
+        let candidates = [];
+
+        if (this.discoveredOrientation === "vertical") {
+            candidates = [[x, y - 1], [x, y + 1]];
+        } else if (this.discoveredOrientation === "horizontal") {
+            candidates = [[x - 1, y], [x + 1, y]];
+        // Orientation not discovered, try adjacent cells
+        } else {
+            candidates = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]];
+        }
 
         for (const [dx, dy] of candidates) {
             if (
