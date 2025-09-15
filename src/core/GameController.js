@@ -1,7 +1,6 @@
 import { highlight } from "../ui/renderSetup";
 import { BotSetup, PlayerSetup } from "../core/game-configs";
-import { getHoverCells } from "../utils/utils";
-import { translateCoords } from "../utils/utils";
+import { getHoverCells, translateCoords } from "../utils/utils";
 
 class GameController {
     constructor() {
@@ -10,9 +9,9 @@ class GameController {
         this.currentTurn = "player";
 
         // Successful hits on a ship that is not sunk yet
-        this.botHits = [];
+        this.hitCells = [];
         // Cells to hit next
-        this.botTargets = [];
+        this.attackQueue = [];
         this.discoveredOrientation = null;
     }
 
@@ -50,9 +49,8 @@ class GameController {
         }
 
         if (this.botBoard.isAllShipsSunk()) {
-            setTimeout(() => {
-                alert(`${PlayerSetup.playerName} has won!`);
-            }, 0);
+            alert(`${PlayerSetup.playerName} has won!`);
+            return;
         }
 
         this.takeBotTurn();
@@ -65,24 +63,28 @@ class GameController {
 
         let x, y, result;
 
-        if (this.botTargets.length > 0) {
-            [x, y] = this.botTargets.shift();
+        // Focus on a ship or target randomly
+        if (this.attackQueue.length > 0) {
+            [x, y] = this.attackQueue.shift();
         } else {
             x = Math.floor(Math.random() * 10);
             y = Math.floor(Math.random() * 10);
         }
 
+        // result can be: "hit", "miss", "already-attacked", "sunk"
         result = this.playerBoard.receiveAttack(x, y);
 
+        // If attacking an already hit cell, recursively call and return a valid attack result
         if (result === "already-attacked") {
             return this.botAttack();
         }
 
         if (result === "hit") {
-            this.botHits.push([x, y]);
+            this.hitCells.push([x, y]);
 
-            if (this.botHits.length >= 2 && !this.discoveredOrientation) {
-                const [firstAttack, secondAttack] = this.botHits.slice(-2);
+            // Second hit on a ship, figure out its orientation.
+            if (this.hitCells.length === 2) {
+                const [firstAttack, secondAttack] = this.hitCells;
                 if (firstAttack[0] === secondAttack[0])
                     this.discoveredOrientation = "vertical";
                 else if (firstAttack[1] === secondAttack[1])
@@ -91,17 +93,19 @@ class GameController {
 
             this.enqueueAdjacentCells(x, y);
         } else if (result === "sunk") {
-            // Create a new array of coordinates of cells which have a ship and are not sunk
-            this.botHits = this.botHits.filter(([x, y]) => {
+            // Filter out the coordinates of the ship that has just been sunk
+            // Allows bot to continue targeting adjacent squares of ships that have been previously hit but were not part of the sunk ship
+            this.hitCells = this.hitCells.filter(([x, y]) => {
                 const cell = this.playerBoard.board[x][y];
                 // Check that the cell has a ship object in the cell and that it is not sunk
                 return cell?.ship && !cell.ship.isSunk();
             });
 
-            // Reset cells to target
-            this.botTargets = [];
+            // Reset targeting logic configs
+            this.attackQueue = [];
             this.discoveredOrientation = null;
-            for (const [dx, dy] of this.botHits) {
+            // If there are left over hits of ships not sunk, queue up attacks.
+            for (const [dx, dy] of this.hitCells) {
                 this.enqueueAdjacentCells(dx, dy);
             }
         }
@@ -143,7 +147,7 @@ class GameController {
 
         // Check if game is over and bot wins
         if (this.playerBoard.isAllShipsSunk()) {
-            alert("Bot wins");
+            alert(`${BotSetup.botName} wins!`);
             return;
         }
 
@@ -162,14 +166,26 @@ class GameController {
         let candidates = [];
 
         if (this.discoveredOrientation === "vertical") {
-            candidates = [[x, y - 1], [x, y + 1]];
+            candidates = [
+                [x, y - 1],
+                [x, y + 1],
+            ];
         } else if (this.discoveredOrientation === "horizontal") {
-            candidates = [[x - 1, y], [x + 1, y]];
-        // Orientation not discovered, try adjacent cells
+            candidates = [
+                [x - 1, y],
+                [x + 1, y],
+            ];
+            // Orientation not discovered, try adjacent cells
         } else {
-            candidates = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]];
+            candidates = [
+                [x - 1, y],
+                [x + 1, y],
+                [x, y - 1],
+                [x, y + 1],
+            ];
         }
 
+        // Ensure attacks must be within board boundaries
         for (const [dx, dy] of candidates) {
             if (
                 dx >= 0 &&
@@ -177,9 +193,9 @@ class GameController {
                 dy >= 0 &&
                 dy < 10 &&
                 // Prevent duplicates
-                !this.botTargets.some(([hx, hy]) => hx === dx && hy === dy)
+                !this.attackQueue.some(([hx, hy]) => hx === dx && hy === dy)
             ) {
-                this.botTargets.push([dx, dy]);
+                this.attackQueue.push([dx, dy]);
             }
         }
     }

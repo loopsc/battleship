@@ -32,12 +32,12 @@ export function renderGame() {
 
     botContainer.appendChild(botLabel);
 
-    renderComponents(playerContainer);
-    renderComponents(botContainer, false);
-
     parentContainer.appendChild(playerContainer);
     parentContainer.appendChild(gameMasterText);
     parentContainer.appendChild(botContainer);
+
+    renderComponents(playerContainer);
+    renderComponents(botContainer, false);
 }
 
 // Creates the boards, labels, ships
@@ -79,6 +79,8 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
             cell.dataset.x = x;
             cell.dataset.y = y;
 
+            const gameMasterText = document.querySelector(".game-master-text");
+
             // Interactions on the player board
             if (isPlayer) {
                 cell.classList.add("player-cell");
@@ -86,6 +88,11 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
                 if (gameboard.board[x][y]) {
                     cell.classList.add("placed");
                 }
+
+                cell.addEventListener("click", () => {
+                    gameMasterText.textContent =
+                        "Wrong board, try not to hit yourself aye?";
+                });
             }
             // Interactions on the bot board
             else {
@@ -93,9 +100,6 @@ function generateGrid(container, gameboard, isPlayer = false, gridSize = 10) {
 
                 cell.addEventListener("click", () => {
                     if (gameController.currentTurn !== "player") return;
-
-                    const gameMasterText =
-                        document.querySelector(".game-master-text");
 
                     // Perform the attack
                     const result = gameController.playerAttack(x, y, container);

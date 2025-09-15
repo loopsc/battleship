@@ -8,7 +8,8 @@ export function startGame() {
     startGameButton.addEventListener("click", () => {
         // Error check
         if (!PlayerSetup.playerBoard.allShipsPlaced()) {
-            throw new Error("Place all ships");
+            alert("Place all ships before starting the game");
+            return;
         }
 
         // Set a default name if none given
